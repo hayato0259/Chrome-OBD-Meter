@@ -1,0 +1,82 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Eel</title>
+<link rel="stylesheet" href="style.css">
+<script type="text/javascript" src="assets/js/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="assets/js/common.js"></script>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+</head>
+<body>
+	<div class="wrapper">
+		<div class="boot">
+			<img src="assets/images/logo.png" alt="Triumph logo">
+		</div>
+		<div class="tacho">
+			<div class="rpm_bar">
+				<div class="bar_trim_early">
+					<div class="early_trim"></div>
+				</div>
+				<div class="trim"></div>
+				<div class="bar_trim_late"></div>
+			</div>
+			<span class="rpm_num">99999</span>
+		</div>
+		<div id="speed">
+			299
+		</div>
+	</div>
+    <script type="text/javascript" src="/eel.js"></script>
+    <script type="text/javascript">
+	var val = 0;
+	var speed = 0;
+	var rev = 0;
+		
+	function techo(r){
+		if (r <= 0.5){
+			deg = r*360;
+			$('.bar_trim_early').css({
+				display:"block",
+				transform:"rotate("+deg+"deg)"
+			})
+			$('.bar_trim_late').css({
+				display:"block",
+				transform:"rotate(0deg)"
+			})
+		}else if(r > 0.5){
+			deg = r*360 - 180;
+			$('.bar_trim_late').css({
+				display:"block",
+				transform:"rotate("+deg+"deg)"
+			})
+			$('.bar_trim_early').css({
+				display:"block",
+				background:"#FFFFFF",
+				transform:"rotate(0deg)",
+				"z-index":"50"
+			})
+		}
+	}
+
+	async function run() {
+		vals = await eel.python_function2()();
+		
+		rev = vals.rpm / 16000;
+		techo(rev);
+		console.log(rev);
+		console.log(vals.rpm);
+
+
+		speed = zeroPadding(vals.speed,3);
+		rpm = zeroPadding(vals.rpm,5);
+
+		$('#speed').text(speed);
+		$('.rpm_num').text(rpm);
+
+		rev = 0;
+	}
+	setInterval('run()',50);
+	</script>
+</body>
+</html>
